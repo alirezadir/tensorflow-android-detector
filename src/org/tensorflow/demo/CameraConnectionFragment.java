@@ -115,7 +115,7 @@ public class CameraConnectionFragment extends Fragment {
    * selected preview size is known.
    */
   public interface ConnectionCallback {
-    void onPreviewSizeChosen(Size size, int cameraRotation);
+    void onPreviewSizeChosen(Size size, int cameraRotation, int orientation);
   }
 
   /**
@@ -385,7 +385,7 @@ public class CameraConnectionFragment extends Fragment {
                 Arrays.asList(map.getOutputSizes(ImageFormat.YUV_420_888)),
                 new CompareSizesByArea());
 
-        sensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
+        sensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);  // 90 for most of devices (270 for some other)
 
         // Danger, W.R.! Attempting to use too large a preview size could  exceed the camera
         // bus' bandwidth limitation, resulting in gorgeous previews but the storage of
@@ -418,7 +418,9 @@ public class CameraConnectionFragment extends Fragment {
       throw new RuntimeException(getString(R.string.camera_error));
     }
 
-    cameraConnectionCallback.onPreviewSizeChosen(previewSize, sensorOrientation);
+    // Orientation
+    int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
+    cameraConnectionCallback.onPreviewSizeChosen(previewSize, sensorOrientation, ORIENTATIONS.get(rotation));
   }
 
   /**

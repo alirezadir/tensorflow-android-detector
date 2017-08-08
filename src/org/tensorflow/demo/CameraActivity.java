@@ -155,8 +155,8 @@ public abstract class CameraActivity extends Activity implements OnImageAvailabl
         CameraConnectionFragment.newInstance(
             new CameraConnectionFragment.ConnectionCallback() {
               @Override
-              public void onPreviewSizeChosen(final Size size, final int rotation) {
-                CameraActivity.this.onPreviewSizeChosen(size, rotation);
+              public void onPreviewSizeChosen(final Size size, final int rotation, final int orientation) {
+                CameraActivity.this.onPreviewSizeChosen(size, rotation, orientation);
               }
             },
             this,
@@ -213,7 +213,7 @@ public abstract class CameraActivity extends Activity implements OnImageAvailabl
     return super.onKeyDown(keyCode, event);
   }
 
-  protected abstract void onPreviewSizeChosen(final Size size, final int rotation);
+  protected abstract void onPreviewSizeChosen(final Size size, final int rotation, final int orientation);
   protected abstract int getLayoutId();
   protected abstract Size getDesiredPreviewFrameSize();
 }

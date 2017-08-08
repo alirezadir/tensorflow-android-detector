@@ -34,6 +34,8 @@ import android.os.Trace;
 import android.util.Size;
 import android.util.TypedValue;
 import android.view.Display;
+import android.view.Surface;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
@@ -66,7 +68,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
   private static final int CROP_SIZE =  YOLO_INPUT_SIZE;
 
-  private static final boolean SHOW_BOUNDING_BOX = false;
+  private static final boolean SHOW_BOUNDING_BOX = true;
 
   // Minimum detection confidence to track a detection.
   private static final float MINIMUM_CONFIDENCE = 0.25f;
@@ -107,7 +109,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
   private long lastProcessingTimeMs;
 
   @Override
-  public void onPreviewSizeChosen(final Size size, final int rotation) {
+  public void onPreviewSizeChosen(final Size size, final int cameraOrientation, final int screenOrientation) {
     final float textSizePx =
             TypedValue.applyDimension(
                     TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE_DIP, getResources().getDisplayMetrics());
@@ -129,12 +131,15 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     previewWidth = size.getWidth();
     previewHeight = size.getHeight();
 
-    final Display display = getWindowManager().getDefaultDisplay();
-    final int screenOrientation = display.getRotation();
+//    final Display display = getWindowManager().getDefaultDisplay();
+//    final int screenOrientation = display.getRotation();
 
-    LOGGER.i("Sensor orientation: %d, Screen orientation: %d", rotation, screenOrientation);
+    LOGGER.i("Camera orientation: %d, Screen orientation: %d", cameraOrientation, screenOrientation);
 
-    sensorOrientation = rotation + screenOrientation;
+    sensorOrientation = (cameraOrientation + screenOrientation + 270) % 360;
+
+    LOGGER.i("Total sensor orientation is:  %d", sensorOrientation);
+
 
     LOGGER.i("Initializing at size %dx%d", previewWidth, previewHeight);
     rgbBytes = new int[previewWidth * previewHeight];
